@@ -1,6 +1,10 @@
 import requests
 import json
 import types
+
+
+
+
 def get_session():
 
     url = 'http://challenge.shopcurbside.com/get-session'
@@ -8,9 +12,14 @@ def get_session():
     #print(r.text)
     return r.text
 
+
+
+
 def get_base_secrets(session,sid):
     """ ugly brute force attempt
-
+    wrote three loops to get to when depth from json == 4, 
+    'secret' keyword should be available to parse.
+    
     """
     url = 'http://challenge.shopcurbside.com/'
     startIDs = ['34ffe00db65f4576b5add43dda39ff99',
@@ -27,7 +36,7 @@ def get_base_secrets(session,sid):
         #if 'secret' in j2: print j2['secret']#print j2
 
         if 'error' in j2:
-            headers = {'Session':get_session()}
+            headers['Session'] = get_session()
             r2 = requests.get(url+line,headers=headers)
             j2 = json.loads(r2.content.lower())
 
@@ -39,7 +48,7 @@ def get_base_secrets(session,sid):
             j3 = json.loads(r3.content.lower())
 
             if 'error' in j3:
-                headers = {'Session':get_session()}
+                headers['Session'] = get_session()
                 r3 = requests.get(url+j2['next'],headers=headers)
                 j3 = json.loads(r3.content.lower())
 
@@ -53,7 +62,7 @@ def get_base_secrets(session,sid):
                 j3 = json.loads(r3.content.lower())
 
                 if 'error' in j3:
-                    headers = {'Session':get_session()}
+                    headers['Session'] = get_session()
                     r3 = requests.get(url+aline,headers=headers)
                     j3 = json.loads(r3.content.lower())
 
@@ -68,7 +77,7 @@ def get_base_secrets(session,sid):
                     j4 = json.loads(r4.content.lower())
 
                     if 'error' in j4:
-                        headers = {'Session':get_session()}
+                        headers['Session'] = get_session()
                         r4 = requests.get(url+j3['next'],headers=headers)
                         j4 = json.loads(r4.content.lower())
 
@@ -80,11 +89,14 @@ def get_base_secrets(session,sid):
                         j4 = json.loads(r4.content)
 
                         if 'error' in j4:
-                            headers = {'Session':get_session()}
+                            headers['Session'] = get_session()
                             r4 = requests.get(url+str(threeLine),headers=headers)
                             j4 = json.loads(r4.content.lower())
 
                         print(j4)
+
+
+
 
 def get_display_data(aUrl, nexts, someHeaders):
     r = requests.get(aUrl+str(nexts),headers=someHeaders)
@@ -114,6 +126,8 @@ def get_display_data(aUrl, nexts, someHeaders):
         except:
             print("")  
             
+
+
 def get_level_secrets(aUrl,nexts,someHeaders):
     #headers = {'Session':session}
     if type(nexts) is not types.ListType:
@@ -123,7 +137,6 @@ def get_level_secrets(aUrl,nexts,someHeaders):
         # loopy
         for someLine in nexts:
             get_display_data(aUrl, nexts, someHeaders)
-                
 
 
 
@@ -143,8 +156,14 @@ def start(rec):
         get_base_secrets(get_session(),0)
         get_base_secrets(get_session(),1)
         get_base_secrets(get_session(),2)
-        
+
+
+
+
 if __name__ == "__main__":
     # pass in True to see recursive implementation output.
     start(False)
+
+
+
     
